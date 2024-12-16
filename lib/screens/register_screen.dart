@@ -1,8 +1,6 @@
-import 'package:deber_02/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart'; // Asegúrate de importar la pantalla de login
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -14,9 +12,10 @@ class RegisterScreen extends StatelessWidget {
         email: emailController.text,
         password: passwordController.text,
       );
+      // Después de un registro exitoso, redirigimos a la pantalla de login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => LoginScreen()), // Redirigir a LoginScreen
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -49,7 +48,10 @@ class RegisterScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
               },
               child: Text('¿Ya tienes cuenta? Inicia sesión'),
             ),

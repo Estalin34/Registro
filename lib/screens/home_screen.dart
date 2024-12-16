@@ -1,7 +1,9 @@
 import 'package:deber_02/screens/detalle_nota_screen.dart';
 import 'package:deber_02/screens/formulario_nota_screen.dart';
+import 'package:deber_02/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,11 +15,42 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final DatabaseReference db = FirebaseDatabase.instance.ref();
 
+  // Verifica si el usuario está logueado al iniciar
+  void _checkUserLoggedIn() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Si no hay usuario logueado, redirige al login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserLoggedIn();  
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Notas'),
+        actions: [
+          // Botón para cerrar sesión
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()), // Redirige al login
+              );
+            },
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: db.child('notas').onValue,
@@ -48,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text(note['titulo']),
                 subtitle: Text(note['descripcion']),
                 onTap: () {
-                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -65,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>  FormularioNotaScreen()),
+            MaterialPageRoute(builder: (context) => FormularioNotaScreen()), 
           );
         },
         child: const Icon(Icons.add),

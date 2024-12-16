@@ -52,10 +52,10 @@ class _FormularioNotaScreenState extends State<FormularioNotaScreen> {
                   'precio': precioController.text,
                 };
 
-                // Guardar la nueva nota en Firebase
+              
                 db.child('notas').push().set(newNote).then((_) {
                   print("Nota guardada con éxito");
-                  Navigator.pop(context); // Regresa a la pantalla anterior
+                  Navigator.pop(context); 
                 }).catchError((error) {
                   print("Error al guardar la nota: $error");
                 });
